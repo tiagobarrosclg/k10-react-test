@@ -11,116 +11,68 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+import { Task } from '~/components/Task';
 
 const initialTasks = [
   {
     title: 'Grab some Pizza',
-    completed: true,
+    status: true,
   },
   {
     title: 'Do your workout',
-    completed: true,
+    status: true,
   },
   {
     title: 'Hangout with friends',
-    completed: false,
+    status: false,
   },
 ];
-
-type TaskProps = {
-  task: {
-    title: string;
-    completed: boolean;
-  };
-  index: number;
-  onCompleted(index: number): void;
-};
-
-function Task({ task, index, onCompleted }: TaskProps) {
-  return (
-    <View style={styles.task}>
-      <View style={styles.taskTitle}>
-        <Text>💡</Text>
-
-        <Text
-          style={{
-            textDecorationLine: task.completed ? 'line-through' : 'none',
-          }}
-        >
-          {task.title}
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        style={styles.toggleTaskButton}
-        activeOpacity={0.6}
-        onPress={() => onCompleted(index)}
-      >
-        <Text style={{ color: '#fff' }}>
-          {task.completed ? 'Undone' : 'Done'}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
 
 export const ToDo = (props: ViewProps) => {
   const [tasks, setTasks] = useState(initialTasks);
   const [value, setValue] = useState('');
 
-  const handleSubmit = () => {
+  function handleAddNewTask(title: string) {
+    setTasks((prevState) => [...prevState, { title, status: false }]);
+  }
+
+  function handleSubmit() {
     if (!value) return;
 
-    addTask(value);
+    handleAddNewTask(value);
     setValue('');
-  };
+  }
 
-  const addTask = (title: string) => {
-    const newTasks = [...tasks, { title, completed: false }];
-    setTasks(newTasks);
-  };
-
-  const completeTask = (index: number) => {
+  function toggleTaskStatus(index: number) {
     const newTasks = [...tasks];
-    newTasks[index].completed = !newTasks[index].completed;
+    newTasks[index].status = !newTasks[index].status;
+
     setTasks(newTasks);
-  };
+  }
 
   return (
     <View style={styles.container} {...props}>
       <SafeAreaView />
 
-      <View style={{ alignItems: 'center', width: '100%' }}>
+      <View style={styles.inputContainer}>
         <TextInput
-          style={{
-            backgroundColor: '#ffffff',
-            padding: 10,
-            color: '#000000',
-            width: '90%',
-          }}
           value={value}
+          onChangeText={(event) => setValue(event)}
           placeholder="Add a new task"
           placeholderTextColor="#444"
-          onChangeText={(event) => setValue(event)}
           returnKeyType="done"
           onSubmitEditing={handleSubmit}
+          style={styles.input}
         />
       </View>
 
-      <View
-        style={{
-          backgroundColor: '#333',
-          width: '90%',
-          height: 1,
-          marginVertical: 8,
-        }}
-      />
+      <View style={styles.divider} />
 
       <FlatList
         style={styles.contentScroll}
         data={tasks}
         renderItem={({ item, index }) => (
-          <Task onCompleted={completeTask} task={item} index={index} />
+          <Task action={toggleTaskStatus} task={item} index={index} />
         )}
         keyExtractor={(_, index) => String(index)}
         showsVerticalScrollIndicator={false}
@@ -128,21 +80,14 @@ export const ToDo = (props: ViewProps) => {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={{
-          padding: 20,
-
-          flexDirection: 'row',
-          justifyContent: 'center',
-
-          width: '100%',
-        }}
+        style={styles.keyboardContainer}
       >
         <TouchableOpacity
-          style={styles.addNewTaskButton}
           activeOpacity={0.6}
           onPress={handleSubmit}
+          style={styles.addNewTaskButton}
         >
-          <Text>Add new To Do</Text>
+          <Text style={styles.textButton}>Add new To Do</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
 
@@ -155,21 +100,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    backgroundColor: '#eee',
     alignItems: 'center',
+
+    backgroundColor: '#eee',
+  },
+  inputContainer: {
+    alignItems: 'center',
+
+    width: '100%',
+  },
+  input: {
+    backgroundColor: '#ffffff',
+
+    color: '#000000',
+
+    padding: 10,
+
+    width: '90%',
+  },
+  divider: {
+    backgroundColor: '#333',
+
+    width: '90%',
+    height: 1,
+
+    marginVertical: 8,
+  },
+  keyboardContainer: {
+    padding: 20,
+
+    flexDirection: 'row',
+    justifyContent: 'center',
+
+    width: '100%',
+  },
+  textButton: {
+    fontWeight: '600',
+
+    color: '#222',
   },
   contentScroll: {
     width: '90%',
-  },
-  content: {},
-  task: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  taskTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   addNewTaskButton: {
     backgroundColor: '#27ec92',
@@ -178,19 +149,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
 
     borderRadius: 8,
-    marginBottom: 8,
-  },
-  toggleTaskButton: {
-    backgroundColor: '#3b6de3',
 
-    width: 100,
-
-    alignItems: 'center',
-
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-
-    borderRadius: 8,
     marginBottom: 8,
   },
 });
