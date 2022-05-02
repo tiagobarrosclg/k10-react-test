@@ -1,26 +1,41 @@
 import * as React from 'react';
-import {useState} from 'react';
-import {Button, StyleSheet, TextInput} from 'react-native';
-import {Text, View} from '../components/Themed';
+import { useState } from 'react';
+import { Button, StyleSheet, TextInput } from 'react-native';
+import { Text, View } from '../components/Themed';
 
 export type Task = {
-  title: string
-  completed: boolean
-}
+  title: string;
+  completed: boolean;
+};
 
 export default function TodoListScreen() {
   return (
     <View style={styles.container}>
-      <Todo/>
+      <Todo />
     </View>
   );
 }
 
-function Task(props: { task: Task, index: number, onCompleted: (index: number) => void }) {
+function Task(props: {
+  task: Task;
+  index: number;
+  onCompleted: (index: number) => void;
+}) {
   return (
     <View>
-      💡<Text style={{textDecorationLine: props.task.completed ? "line-through" : "none"}}>{props.task.title}</Text>
-      <Button onPress={() => (props.onCompleted(props.index))} title={props.task.completed ? "Undone" : "Done"}/>
+      <Text>💡</Text>
+
+      <Text
+        style={{
+          textDecorationLine: props.task.completed ? 'line-through' : 'none',
+        }}
+      >
+        {props.task.title}
+      </Text>
+      <Button
+        onPress={() => props.onCompleted(props.index)}
+        title={props.task.completed ? 'Undone' : 'Done'}
+      />
     </View>
   );
 }
@@ -28,21 +43,21 @@ function Task(props: { task: Task, index: number, onCompleted: (index: number) =
 function Todo() {
   const [tasks, setTasks] = useState([
     {
-      title: "Grab some Pizza",
-      completed: true
+      title: 'Grab some Pizza',
+      completed: true,
     },
     {
-      title: "Do your workout",
-      completed: true
+      title: 'Do your workout',
+      completed: true,
     },
     {
-      title: "Hangout with friends",
-      completed: false
-    }
+      title: 'Hangout with friends',
+      completed: false,
+    },
   ]);
 
   const addTask = (title: string) => {
-    const newTasks = [...tasks, {title, completed: false}];
+    const newTasks = [...tasks, { title, completed: false }];
     setTasks(newTasks);
   };
 
@@ -54,7 +69,7 @@ function Todo() {
 
   return (
     <View>
-      <div>
+      <View>
         {tasks.map((task, index) => (
           <Task
             onCompleted={completeTask}
@@ -63,32 +78,33 @@ function Todo() {
             key={index}
           />
         ))}
-      </div>
+      </View>
+
       <View>
-        <CreateTask addTask={addTask}/>
+        <CreateTask addTask={addTask} />
       </View>
     </View>
   );
 }
 
 function CreateTask(props: { addTask: (value: string) => void }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
 
   const handleSubmit = () => {
     if (!value) return;
     props.addTask(value);
-    setValue("");
-  }
+    setValue('');
+  };
 
   return (
     <View>
       <TextInput
-        style={{backgroundColor: '#ffffff', padding: 10, color: '#000000'}}
+        style={{ backgroundColor: '#ffffff', padding: 10, color: '#000000' }}
         value={value}
         placeholder="Add a new task"
-        onChangeText={e => setValue(e)}
+        onChangeText={(e) => setValue(e)}
       />
-      <Button onPress={handleSubmit} title={"Add"}/>
+      <Button onPress={handleSubmit} title={'Add'} />
     </View>
   );
 }
