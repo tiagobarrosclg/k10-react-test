@@ -1,22 +1,25 @@
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import useCachedResources from './src/hooks/useCachedResources';
+import { ContextProviders } from './src/contexts';
 import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation';
 
 export default function App() {
-  const isLoadingComplete = useCachedResources();
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+  }, []);
+
   const colorScheme = useColorScheme();
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
-    return (
+  return (
+    <ContextProviders>
       <SafeAreaProvider>
         <Navigation colorScheme={colorScheme} />
-        <StatusBar />
+
+        <StatusBar style={colorScheme} />
       </SafeAreaProvider>
-    );
-  }
+    </ContextProviders>
+  );
 }
