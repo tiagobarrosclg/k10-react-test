@@ -2,7 +2,7 @@ import {
   createStackNavigator,
   TransitionPresets,
 } from '@react-navigation/stack';
-import TodoListScreen from '../screens/TodoListScreen';
+import { ToDo } from '~/screens/ToDo';
 
 export type RootStackParamList = {
   ToDo: undefined;
@@ -15,13 +15,9 @@ export const StackRoutes = () => (
     screenOptions={{
       ...TransitionPresets.SlideFromRightIOS,
       cardStyle: { backgroundColor: 'transparent' },
-      headerShown: true,
+      headerShown: false,
     }}
   >
-    <Stack.Screen
-      name="ToDo"
-      component={TodoListScreen}
-      options={{ title: 'To do List' }}
-    />
+    <Stack.Screen name="ToDo" component={ToDo} />
   </Stack.Navigator>
 );
