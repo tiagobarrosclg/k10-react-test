@@ -1,10 +1,11 @@
+import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ContextProviders } from './src/contexts';
 import useColorScheme from './src/hooks/useColorScheme';
-import Navigation from './src/navigation';
+import { Routes } from './src/routes';
 
 export default function App() {
   useEffect(() => {
@@ -16,9 +17,11 @@ export default function App() {
   return (
     <ContextProviders>
       <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
+        <NavigationContainer>
+          <Routes />
+        </NavigationContainer>
 
-        <StatusBar style={colorScheme} />
+        <StatusBar style={colorScheme === 'light' ? 'dark' : 'light'} />
       </SafeAreaProvider>
     </ContextProviders>
   );
