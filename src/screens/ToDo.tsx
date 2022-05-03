@@ -4,7 +4,6 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,6 +11,7 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Task } from '~/components/Task';
 
 type Task = {
@@ -29,7 +29,7 @@ export const ToDo = (props: ViewProps) => {
 
       if (!cachedTasks) return;
 
-      // setTasks(JSON.parse(cachedTasks));
+      setTasks(JSON.parse(cachedTasks));
     }
 
     loadTasks();
@@ -110,7 +110,6 @@ export const ToDo = (props: ViewProps) => {
         </TouchableOpacity>
       </KeyboardAvoidingView>
 
-      <SafeAreaView />
     </View>
   );
 };
