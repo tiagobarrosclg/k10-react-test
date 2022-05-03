@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import * as SecureStore from 'expo-secure-store';
+import { useEffect, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -13,27 +14,39 @@ import {
 } from 'react-native';
 import { Task } from '~/components/Task';
 
-const initialTasks = [
-  {
-    title: 'Grab some Pizza',
-    status: true,
-  },
-  {
-    title: 'Do your workout',
-    status: true,
-  },
-  {
-    title: 'Hangout with friends',
-    status: false,
-  },
-];
+type Task = {
+  title: string;
+  status: boolean;
+};
 
 export const ToDo = (props: ViewProps) => {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([] as Task[]);
   const [value, setValue] = useState('');
 
-  function handleAddNewTask(title: string) {
-    setTasks((prevState) => [...prevState, { title, status: false }]);
+  useEffect(() => {
+    async function loadTasks() {
+      const cachedTasks = await SecureStore.getItemAsync('tasks');
+
+      if (!cachedTasks) return;
+
+      // setTasks(JSON.parse(cachedTasks));
+    }
+
+    loadTasks();
+  }, []);
+
+  async function handleAddNewTask(title: string) {
+    setTasks((prevState) => {
+      const taskToReturn = [...prevState, { title, status: false }];
+
+      async function handleSaveTasks() {
+        await SecureStore.setItemAsync('tasks', JSON.stringify(taskToReturn));
+      }
+
+      handleSaveTasks();
+
+      return taskToReturn;
+    });
   }
 
   function handleSubmit() {
@@ -44,10 +57,11 @@ export const ToDo = (props: ViewProps) => {
   }
 
   function toggleTaskStatus(index: number) {
-    const newTasks = [...tasks];
-    newTasks[index].status = !newTasks[index].status;
+    setTasks((prevState) => {
+      prevState[index].status = !prevState[index].status;
 
-    setTasks(newTasks);
+      return [...prevState];
+    });
   }
 
   return (
@@ -76,6 +90,11 @@ export const ToDo = (props: ViewProps) => {
         )}
         keyExtractor={(_, index) => String(index)}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyListContainer}>
+            <Text>The task list is empty, add a new task to start!</Text>
+          </View>
+        )}
       />
 
       <KeyboardAvoidingView
@@ -125,6 +144,11 @@ const styles = StyleSheet.create({
     height: 1,
 
     marginVertical: 8,
+  },
+  emptyListContainer: {
+    alignItems: 'center',
+
+    marginTop: 14,
   },
   keyboardContainer: {
     padding: 20,
