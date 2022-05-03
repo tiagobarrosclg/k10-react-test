@@ -18,13 +18,15 @@ type TaskProps = ViewProps & {
 export const Task = ({ task, index, action, ...rest }: TaskProps) => {
   return (
     <View style={styles.task} {...rest}>
-      <View style={styles.taskTitle}>
+      <View style={styles.taskTitleContainer}>
         <Text>💡</Text>
 
         <Text
           style={{
             textDecorationLine: task.status ? 'line-through' : 'none',
+            width: 200,
           }}
+          numberOfLines={1}
         >
           {task.title}
         </Text>
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  taskTitle: {
+  taskTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -60,6 +62,8 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 24,
     paddingVertical: 12,
+
+    marginLeft: 8,
 
     borderRadius: 8,
 
